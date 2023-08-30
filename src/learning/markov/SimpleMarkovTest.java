@@ -77,7 +77,9 @@ public class SimpleMarkovTest {
     public void testSourceProbabilities() throws IOException {
         for (String filename: new String[]{"books/english_test.txt", "books/spanish_test.txt"}) {
             double eng = chains.probability(file2chars(filename), "English");
+            System.out.println("English = " + eng);
             double spa = chains.probability(file2chars(filename), "Spanish");
+            System.out.println("Spanish = " + spa);
             if (filename.contains("english")) {
                 assertTrue(eng > spa);
             } else {
