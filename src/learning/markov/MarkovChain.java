@@ -31,32 +31,23 @@ public class MarkovChain<L,S> {
     // Increase the count for the transition from prev to next.
     // Should pass SimpleMarkovTest.testCreateChains().
     public void count(Optional<S> prev, L label, S next) {
-        HashMap<Optional<S>, Histogram<S>> symbol2symbol = label2symbol2symbol.get(label);
+        HashMap<Optional<S>, Histogram<S>> symbol2symbol = label2symbol2symbol.computeIfAbsent(label, k -> new HashMap<>());
 
-        // If the map doesn't exist for the label, create a new one
-        if (symbol2symbol == null) {
-            symbol2symbol = new HashMap<>();
-            label2symbol2symbol.put(label, symbol2symbol);
-        }
-
-        // Retrieve the histogram for the optional previous symbol from the label's map
         Histogram<S> histogram = symbol2symbol.get(prev);
         if (histogram == null) {
             histogram = new Histogram<>();
             symbol2symbol.put(prev, histogram);
         }
 
-        // Increase the count for the 'next' symbol in the histogram
         histogram.bump(next);
     }
 
-    // Returns P(sequence | label)
-    // Should pass SimpleMarkovTest.testSourceProbabilities() and MajorMarkovTest.phraseTest()
-    //
+
     // HINT: Be sure to add 1 to both the numerator and denominator when finding the probability of a
     // transition. This helps avoid sending the probability to zero.
     public double probability(ArrayList<S> sequence, L label) {
-        double logProbabilitySum = 0.0; // Initialize the log probability sum
+        double logProbabilitySum;
+        logProbabilitySum = 0.0;
 
         HashMap<Optional<S>, Histogram<S>> symbol2symbol = label2symbol2symbol.get(label);
         if (symbol2symbol != null) {
@@ -66,7 +57,8 @@ public class MarkovChain<L,S> {
                 Histogram<S> histogram = symbol2symbol.get(prev);
 
                 if (histogram != null) {
-                    double prob = (histogram.getCountFor(currentSymbol) + 1.0) / (histogram.getTotalCounts() + histogram.size());
+                    double prob = (histogram.getCountFor(currentSymbol) + 1.0) / (histogram.getTotalCounts() + 1.0
+                    );
                     double logProb = Math.log(prob);
                     logProbabilitySum += logProb;
                 }
@@ -75,7 +67,7 @@ public class MarkovChain<L,S> {
             }
         }
 
-        return Math.exp(logProbabilitySum); // Convert back to regular probability
+        return Math.exp(logProbabilitySum); //reconvert
     }
 
     // Return a map from each label to P(label | sequence).
@@ -103,7 +95,7 @@ public class MarkovChain<L,S> {
     public L bestMatchingChain(ArrayList<S> sequence) {
         LinkedHashMap<L, Double> allLang = labelDistribution(sequence);
         L bestChoice = null;
-        double maxProbability = Double.NEGATIVE_INFINITY;
+        double maxProbability = 0.0;
 
         for (Map.Entry<L, Double> entry : allLang.entrySet()) {
             if (entry.getValue() > maxProbability) {
