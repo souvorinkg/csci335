@@ -29,11 +29,11 @@ public class MarkovLanguage extends MarkovChain<String,Character> {
 
     public static Optional<Character> usableCharacter(char c) {
         c = Character.toLowerCase(c);
-        if (Character.isSpaceChar(c)) {
-            c = ' ';
-        }
-        if (Character.isAlphabetic(c) || c == ' ') {
+
+        if (c >= 'a' && c <= 'z') { // Restrict to English Latin alphabet
             return Optional.of(c);
+        } else if (Character.isSpaceChar(c)) {
+            return Optional.of(' ');
         } else {
             return Optional.empty();
         }
