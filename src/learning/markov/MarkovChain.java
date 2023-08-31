@@ -82,7 +82,6 @@ public class MarkovChain<L,S> {
             totalProbability += labelProb;
         }
 
-        // Normalize the probabilities to ensure they add up to one
         for (Map.Entry<L, Double> entry : distribution.entrySet()) {
             distribution.put(entry.getKey(), entry.getValue() / totalProbability);
         }
