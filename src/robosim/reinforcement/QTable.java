@@ -1,5 +1,6 @@
 package robosim.reinforcement;
 
+import java.io.Console;
 import java.util.Arrays;
 
 public class QTable {
@@ -13,26 +14,56 @@ public class QTable {
     //  Calculate the learning rate using this formula: 1/(1 + total visits for this (state, action) pair/rateConstant)
     //  Should pass QTableTest.testLearningRate().
     public double getLearningRate(int state, int action) {
-        return 0.0;
+        return 1/(1 + visits[state][action]/rateConstant);
     }
 
     // TODO: Find the action for the given state that has the highest q value.
     //  Should pass QTableTest.testBestAction()
     public int getBestAction(int state) {
-        return -1;
+        int bestAction = -1;  // Initialize to an invalid action index
+        double bestQ = Double.NEGATIVE_INFINITY;  // Initialize to a very low value
+
+        // Iterate through q[state][] and find the highest q value
+        for (int action = 0; action < q[state].length; action++) {
+            if (q[state][action] > bestQ) {
+                bestQ = q[state][action];
+                bestAction = action;
+            }
+        }
+
+        return bestAction;
     }
 
     // TODO: Returns true if any action for this state is below the target
     //  visits. Returns false otherwise.
     //  Should pass QTableTest.testIsExploring()
     public boolean isExploring(int state) {
-        return false;
+        // Iterate through actions in the state
+        for (int action = 0; action < visits[state].length; action++) {
+            // Check if the visits for the current action are below targetVisits
+            if (visits[state][action] < targetVisits) {
+                return true; // At least one action is still being explored
+            }
+        }
+
+        return false; // All actions have been explored enough
     }
 
     // TODO: Returns the least visited action in state.
     //  Should pass QTableTest.testLeastVisitedAction()
     public int leastVisitedAction(int state) {
-        return -1;
+        int leastVisited = Integer.MAX_VALUE; // Initialize to a very high value
+        int leastVisitedAction = -1; // Initialize to an invalid action index
+
+        // Iterate through actions in the state
+        for (int action = 0; action < visits[state].length; action++) {
+            if (visits[state][action] < leastVisited) {
+                leastVisited = visits[state][action];
+                leastVisitedAction = action;
+            }
+        }
+
+        return leastVisitedAction;
     }
 
     // TODO:
@@ -49,8 +80,52 @@ public class QTable {
     //  Q update formula:
     //    Q(s, a) = (1 - learningRate) * Q(s, a) + learningRate * (discount * maxa(Q(s', a)) + r(s))
     public int senseActLearn(int newState, double reward) {
-        return -1;
+        int selectedAction = -1;
+
+        // Step 1: Calculate the update for the last state and action
+        double oldQ = q[lastState][lastAction];
+        double maxQ = getMaxQ(newState);
+        double alpha = getLearningRate(lastState, lastAction);
+
+
+        // Step 2: Modify the q-value for the last state and action
+        double newQ = ((1 - alpha) * oldQ) + (alpha * (discount * maxQ + reward));
+        q[lastState][lastAction] = newQ;
+
+        // Step 3: Increase the visit count for the last state and action
+        visits[lastState][lastAction]++;
+
+        // Step 4: Select the action for the new state
+        if (isExploring(newState)) {
+            // If exploring, use the least visited action
+            selectedAction = leastVisitedAction(newState);
+        } else {
+            // If not exploring, use the best action
+            selectedAction = getBestAction(newState);
+        }
+
+        // Step 5: Update the last state and action
+        lastState = newState;
+        lastAction = selectedAction;
+
+        // Step 6: Return the selected action
+        return selectedAction;
     }
+
+    public double getMaxQ(int state) {
+        double maxQ = Double.NEGATIVE_INFINITY;
+
+        // Iterate through all possible actions for the given state
+        for (int action = 0; action < q[state].length; action++) {
+            if (q[state][action] > maxQ) {
+                maxQ = q[state][action];
+            }
+        }
+
+        return maxQ;
+    }
+
+
 
     public QTable(int states, int actions, int startState, int targetVisits, int rateConstant, double discount) {
         this.targetVisits = targetVisits;
