@@ -20,17 +20,14 @@ public class QTable {
     // TODO: Find the action for the given state that has the highest q value.
     //  Should pass QTableTest.testBestAction()
     public int getBestAction(int state) {
-        int bestAction = -1;  // Initialize to an invalid action index
-        double bestQ = Double.NEGATIVE_INFINITY;  // Initialize to a very low value
-
-        // Iterate through q[state][] and find the highest q value
+        int bestAction = -1;
+        double bestQ = Double.NEGATIVE_INFINITY;
         for (int action = 0; action < q[state].length; action++) {
             if (q[state][action] > bestQ) {
                 bestQ = q[state][action];
                 bestAction = action;
             }
         }
-
         return bestAction;
     }
 
@@ -38,31 +35,25 @@ public class QTable {
     //  visits. Returns false otherwise.
     //  Should pass QTableTest.testIsExploring()
     public boolean isExploring(int state) {
-        // Iterate through actions in the state
         for (int action = 0; action < visits[state].length; action++) {
-            // Check if the visits for the current action are below targetVisits
             if (visits[state][action] < targetVisits) {
-                return true; // At least one action is still being explored
+                return true;
             }
         }
-
-        return false; // All actions have been explored enough
+        return false;
     }
 
     // TODO: Returns the least visited action in state.
     //  Should pass QTableTest.testLeastVisitedAction()
     public int leastVisitedAction(int state) {
-        int leastVisited = Integer.MAX_VALUE; // Initialize to a very high value
-        int leastVisitedAction = -1; // Initialize to an invalid action index
-
-        // Iterate through actions in the state
+        int leastVisited = Integer.MAX_VALUE;
+        int leastVisitedAction = -1;
         for (int action = 0; action < visits[state].length; action++) {
             if (visits[state][action] < leastVisited) {
                 leastVisited = visits[state][action];
                 leastVisitedAction = action;
             }
         }
-
         return leastVisitedAction;
     }
 
@@ -114,14 +105,11 @@ public class QTable {
 
     public double getMaxQ(int state) {
         double maxQ = Double.NEGATIVE_INFINITY;
-
-        // Iterate through all possible actions for the given state
         for (int action = 0; action < q[state].length; action++) {
             if (q[state][action] > maxQ) {
                 maxQ = q[state][action];
             }
         }
-
         return maxQ;
     }
 
