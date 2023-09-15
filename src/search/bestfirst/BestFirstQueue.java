@@ -3,25 +3,36 @@ package search.bestfirst;
 import search.SearchNode;
 import search.SearchQueue;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.PriorityQueue;
 import java.util.function.ToIntFunction;
 
 public class BestFirstQueue<T> implements SearchQueue<T> {
-    // TODO: Implement this class
-    // HINT: Use java.util.PriorityQueue. It will really help you.
+    private final PriorityQueue<SearchNode<T>> queue;
+    private final HashSet<T> visited = new HashSet<>();
 
     public BestFirstQueue(ToIntFunction<T> heuristic) {
-        // TODO: Your code here
+        this.queue = new PriorityQueue<>(new BestFSComparator<>(heuristic));
     }
+
+
+
 
     @Override
     public void enqueue(SearchNode<T> node) {
-        // TODO: Your code here
+        if (!visited.contains(node.getValue())) {
+            queue.add(node);
+            visited.add(node.getValue());
+        }
     }
 
     @Override
     public Optional<SearchNode<T>> dequeue() {
-        // TODO: Your code here
-        return Optional.empty(); // TODO: Replace this line; it is here to let the code compile.
+        if (queue.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(queue.poll());
+        }
     }
 }
