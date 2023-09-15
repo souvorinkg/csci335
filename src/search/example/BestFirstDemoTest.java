@@ -13,6 +13,8 @@ public class BestFirstDemoTest {
 
         BestFirstDemo better = new BestFirstDemo(new Pos(2, 3));
         better.solve(new Pos(0, 0));
+        System.out.println("Nodes expanded: " + better.getNumNodes());
+        System.out.println("Depth: " + better.getMaxDepth());
         BreadthFirstDemoTest.validatePath(better.getResult().get().searchPath(), new Pos(0, 0), new Pos(2, 3));
         assertTrue(better.getNumNodes() < bfd.getNumNodes());
     }

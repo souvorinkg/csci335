@@ -38,7 +38,7 @@ public class MazeTest {
 			assertTrue(path.solvesMaze(m));
 		}
 	}
-	
+
 	@Test
 	public void testBestFirst() {
 		int totalBest = 0, totalBreadth = 0;
