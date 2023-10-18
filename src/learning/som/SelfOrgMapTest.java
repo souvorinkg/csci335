@@ -84,6 +84,7 @@ public class SelfOrgMapTest {
         d1.set(1, 0, false);
         d1.set(1, 1, false);
         FloatDrawing f2 = new FloatDrawing(d2);
+        System.out.println(f2 + " f2");
         som.train(f2);
         assertEquals(new SOMPoint(2, 0), som.bestFor(f2));
 

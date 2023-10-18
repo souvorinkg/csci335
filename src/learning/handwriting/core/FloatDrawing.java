@@ -33,8 +33,18 @@ public class FloatDrawing {
     //  is calculated as follows:
     //  d1weight * d1 pixel value + (1.0 - d1weight) * d2 pixel value
     public static FloatDrawing weightedAverageOf(FloatDrawing d1, FloatDrawing d2, double d1weight) {
-        // Your code here
-        return null;
+        int width = d1.getWidth();
+        int height = d1.getHeight();
+        double[][] resultPixels = new double[width][height];
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                double d1Value = d1.get(x, y);
+                double d2Value = d2.get(x, y);
+                double weightedAverage = d1weight * d1Value + (1.0 - d1weight) * d2Value;
+                resultPixels[x][y] = weightedAverage;
+            }
+        }
+        return new FloatDrawing(resultPixels);
     }
 
     public int getWidth() {
@@ -48,7 +58,16 @@ public class FloatDrawing {
     // TODO: Calculate the pixel-by-pixel Euclidean distance between these two
     //  FloatDrawing objects.
     public double euclideanDistance(FloatDrawing other) {
-        return 0.0;
+        double sumOfSquares = 0;
+        for (int x = 0; x < getWidth(); x++) {
+            for (int y = 0; y < getHeight(); y++) {
+                double value1 = this.get(x, y);
+                double value2 = other.get(x, y);
+                double diff = value1 - value2;
+                sumOfSquares += diff * diff;
+            }
+        }
+        return sumOfSquares; // Take square root of the sum of squares
     }
 
     @Override

@@ -26,8 +26,33 @@ public class SelfOrgMap<V> {
     //  that is, the y-coordinate is updated in the outer loop, and the x-coordinate
     //  is updated in the inner loop.
     public SOMPoint bestFor(V example) {
-		// Your code here.
-        return null;
+        double small = 100;
+        double dist;
+        SOMPoint close = new SOMPoint(0, 0);
+
+        // Iterate through all nodes in the SOM
+        for (int i = 0; i < numMapNodes(); i++) {
+            //System.out.println(numMapNodes() + " nodes");
+            //System.out.println("Old small " + small + " for " + i);
+            int x = i / getMapHeight();
+            int y = i % getMapHeight();
+
+            V currentPoint = getNode(x, y);
+            //System.out.println(currentPoint + "currentPoint");
+            //System.out.println(example + "currentExample");
+            dist = distance.applyAsDouble(currentPoint, example);
+
+            // If the distance is smaller than the current smallest, update small and close
+            if (dist < small) {
+                //System.out.println(dist + " is smaller than " + small);
+                small = dist; // this line is not updating small
+                //ystem.out.println("New small: " + small + " for " + i);
+                close = new SOMPoint(x, y);
+                //System.out.println(close);
+            }
+        }
+
+        return close;
     }
 
     // TODO: Train this SOM with example.
@@ -37,8 +62,29 @@ public class SelfOrgMap<V> {
     //  3. Update each neighbor of the best matching node that is in the map,
     //     using a learning rate of 0.4.
     public void train(V example) {
-        // Your code here
+        SOMPoint bestSOM = bestFor(example);
+        V best = getNode(bestSOM.y(), bestSOM.x());
+        System.out.println("Old best is " + best);
+        System.out.println("Old example is " + example);
+
+        V newBest = averager.weightedAverage(example, best, .9);
+        System.out.println("New weighted best is " + newBest);
+        map[bestSOM.y()][bestSOM.x()] = newBest; // Update best in the map
+        bestSOM = new SOMPoint(bestSOM.x(), bestSOM.y());
+        SOMPoint[] neighbors = bestSOM.neighbors();
+
+        for (SOMPoint neighborSOM : neighbors) {
+            int neighborX = neighborSOM.x();
+            int neighborY = neighborSOM.y();
+
+            if (inMap(neighborSOM)) {
+                V neighbor = getNode(neighborX, neighborY);
+                V newNeighbor = averager.weightedAverage(example, neighbor, .4);
+                map[neighborX][neighborY] = newNeighbor; // Update neighbor in the map
+            }
+        }
     }
+
 
     public V getNode(int x, int y) {
         return map[x][y];

@@ -21,6 +21,8 @@ public class KnnTest {
         double[] tests = new double[]{15.0, 35.0, 55.0};
         String[] expected = new String[]{"A", "B", "B"};
         for (int i = 0; i < tests.length; i++) {
+            System.out.println("Actual result is: "+ classifier.classify(tests[i])+ " in test # " + i);
+            System.out.println("Expected result is "+ expected[i]+ " in test # " + i);
             assert expected[i].equals(classifier.classify(tests[i]));
         }
     }
