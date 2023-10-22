@@ -5,20 +5,23 @@ import java.util.function.Supplier;
 import java.util.function.ToDoubleBiFunction;
 
 public class SelfOrgMap<V> {
-    private V[][] map;
-    private ToDoubleBiFunction<V, V> distance;
-    private WeightedAverager<V> averager;
+    private final V[][] map;
+    private final ToDoubleBiFunction<V, V> distance;
+    private final WeightedAverager<V> averager;
 
     public SelfOrgMap(int side, Supplier<V> makeDefault, ToDoubleBiFunction<V, V> distance, WeightedAverager<V> averager) {
         this.distance = distance;
         this.averager = averager;
-        map = (V[][])new Object[side][side];
+        map = (V[][]) new Object[side][side];
         for (int i = 0; i < side; i++) {
             for (int j = 0; j < side; j++) {
                 map[i][j] = makeDefault.get();
             }
         }
     }
+
+    //What is a supplier?
+    //What should the map be?
 
     // TODO: Return a SOMPoint corresponding to the map square which has the
     //  smallest distance compared to example.
@@ -30,19 +33,13 @@ public class SelfOrgMap<V> {
         double dist;
         SOMPoint close = new SOMPoint(0, 0);
 
-        // Iterate through all nodes in the SOM
         for (int i = 0; i < numMapNodes(); i++) {
-            //System.out.println(numMapNodes() + " nodes");
-            //System.out.println("Old small " + small + " for " + i);
-            int x = i / getMapHeight();
-            int y = i % getMapHeight();
+            int y = i / getMapHeight();
+            int x = i % getMapHeight();
 
             V currentPoint = getNode(x, y);
-            //System.out.println(currentPoint + "currentPoint");
-            //System.out.println(example + "currentExample");
             dist = distance.applyAsDouble(currentPoint, example);
 
-            // If the distance is smaller than the current smallest, update small and close
             if (dist < small) {
                 //System.out.println(dist + " is smaller than " + small);
                 small = dist; // this line is not updating small
@@ -70,7 +67,7 @@ public class SelfOrgMap<V> {
         V newBest = averager.weightedAverage(example, best, .9);
         System.out.println("New weighted best is " + newBest);
         map[bestSOM.y()][bestSOM.x()] = newBest; // Update best in the map
-        bestSOM = new SOMPoint(bestSOM.x(), bestSOM.y());
+
         SOMPoint[] neighbors = bestSOM.neighbors();
 
         for (SOMPoint neighborSOM : neighbors) {
@@ -82,6 +79,15 @@ public class SelfOrgMap<V> {
                 V newNeighbor = averager.weightedAverage(example, neighbor, .4);
                 map[neighborX][neighborY] = newNeighbor; // Update neighbor in the map
             }
+        }
+
+        // Debugging statements to check if map is updated correctly
+        System.out.println("Updated Map:");
+        for (int i = 0; i < getMapWidth(); i++) {
+            for (int j = 0; j < getMapHeight(); j++) {
+                System.out.print(map[i][j] + " ");
+            }
+            System.out.println();
         }
     }
 

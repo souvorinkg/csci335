@@ -37,7 +37,10 @@ public class SOMRecognizer<V, L> implements Classifier<V, L> {
 
         for (int x = 0; x < som.getMapWidth(); x++) {
             for (int y = 0; y < som.getMapHeight(); y++) {
-                labels[x][y] = findLabelFor(som.getNode(x, y), K, shuffleCopy, distance);
+                V node = som.getNode(x, y);
+                L label = findLabelFor(node, K, shuffleCopy, distance);
+                labels[x][y] = label;
+
                 prog += 1.0 / (2.0 * som.getMapHeight() * som.getMapWidth());
             }
         }
@@ -54,7 +57,7 @@ public class SOMRecognizer<V, L> implements Classifier<V, L> {
     @Override
     public L classify(V d) {
         SOMPoint where = som.bestFor(d);
-        return labels[where.x()][where.y()];
+        return labels[where.y()][where.x()];
     }
 
     public SelfOrgMap<V> getSOM() {return som;}
