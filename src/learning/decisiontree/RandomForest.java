@@ -12,10 +12,10 @@ import java.util.function.Function;
 
 public class RandomForest<V,L, F, FV extends Comparable<FV>> implements Classifier<V,L> {
 	private ArrayList<DecisionTree<V,L,F,FV>> treeRoots;
-	private int numTrees;
-	private Function<ArrayList<Duple<V, L>>, ArrayList<Duple<F,FV>>> allFeatures;
-	private BiFunction<V,F,FV> getFeatureValue;
-	private Function<FV,FV> successor;
+	private final int numTrees;
+	private final Function<ArrayList<Duple<V, L>>, ArrayList<Duple<F,FV>>> allFeatures;
+	private final BiFunction<V,F,FV> getFeatureValue;
+	private final Function<FV,FV> successor;
 
 	public RandomForest(int numTrees, Function<ArrayList<Duple<V, L>>, ArrayList<Duple<F,FV>>> allFeatures,
 						BiFunction<V,F,FV> getFeatureValue, Function<FV,FV> successor) {
@@ -37,9 +37,11 @@ public class RandomForest<V,L, F, FV extends Comparable<FV>> implements Classifi
 
 	@Override
 	public L classify(V v) {
-		// TODO: Ask each tree root for its classification of the Drawing.
-		//  Pick the plurality winner as the winner. I recommend using a Histogram.
-		return null;
+		Histogram<L> Magi = new Histogram<>();
+		for (DecisionTree<V,L,F,FV> tree : treeRoots) {
+			Magi.bump(tree.classify(v));
+		}
+		return Magi.getPluralityWinner();
 	}
 
 	public <D extends Updateable<Duple<F,FV>>> void visualize(L label, D drawable) {
