@@ -65,6 +65,7 @@ public class LanguageGuesser extends JFrame {
     }
 
     private void refreshOutput() {
+        // ArrayList<Word> words = MarkovLanguage.usableWords(entry.getText());
         ArrayList<Character> chars = MarkovLanguage.usableCharacters(entry.getText());
         LinkedHashMap<String, Double> distro = chain.labelDistribution(chars);
         StringBuilder table = new StringBuilder();

@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
 
-public class MarkovLanguage extends MarkovChain<String,Character> {
+public class MarkovTrans extends MarkovChain<String,Character> {
 
     public void countFrom(File languageFile, String language) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(languageFile));
@@ -25,10 +25,6 @@ public class MarkovLanguage extends MarkovChain<String,Character> {
                 }
             }
         }
-    }
-
-    public static <T> Optional<T> usableWord(Optional<T> c) {
-        return Optional.empty();
     }
 
     public static Optional<Character> usableCharacter(char c) {
